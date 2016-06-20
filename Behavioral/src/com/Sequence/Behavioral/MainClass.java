@@ -19,7 +19,11 @@ public class MainClass {
 		
 		System.out.println(max);
 		
-		myseq.execSequence();
+		max = myseq.execSequence_DX1();
+		System.out.println("Inserted records count: " + max);
+		
+		max = myseq.execSequence_DXGT1();
+		System.out.println("Inserted records count: " + max);
 	}
 
 }
