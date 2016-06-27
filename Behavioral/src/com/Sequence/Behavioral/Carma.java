@@ -57,6 +57,7 @@ public class Carma {
 		return confidence;
 	}
 	
+	
 	float getsupport(){
 		return support;
 	}

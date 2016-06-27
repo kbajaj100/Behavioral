@@ -15,6 +15,7 @@ public class Associate {
 	private String SQL;
 	private int pop; //mci_id count
 	
+	
 	DBConn myconn;
 	Carma[] mycarma;
 	

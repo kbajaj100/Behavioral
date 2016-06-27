@@ -33,6 +33,7 @@ public class MainClass {
 		// TODO Auto-generated method stub
 		Sequencer myseq = new Sequencer();
 		
+		
 		int max;
 		
 		max = myseq.getmax();
