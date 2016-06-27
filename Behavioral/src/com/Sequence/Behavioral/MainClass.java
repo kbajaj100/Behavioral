@@ -20,12 +20,14 @@ public class MainClass {
 	private static void Association() throws FileNotFoundException, IOException, SQLException {
 		// TODO Auto-generated method stub
 		
-		int max, count;
+		int max, count, bracket;
 		
 		Associate myassociate = new Associate();
 		
+		bracket = 20;
+		
 		max = myassociate.getmax();
-		count = myassociate.ExecuteCarma(10);
+		count = myassociate.ExecuteCarma(bracket);
 		
 	}
 

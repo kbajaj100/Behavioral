@@ -14,7 +14,7 @@ public class Associate {
 	private int con_count;
 	private String SQL;
 	private int pop; //mci_id count
-	
+	private String bracketTable;
 	
 	DBConn myconn;
 	Carma[] mycarma;
@@ -44,6 +44,7 @@ public class Associate {
 		*/
 		
 		setpop(bracket);
+		settable(bracket);
 		
 		mycarma = new Carma[carma_max];
 		
@@ -80,11 +81,10 @@ public class Associate {
 
 	private void insertCarma() {
 		// TODO Auto-generated method stub
-		SQL = "insert into dbo.carma_10_pct (ante_sql, con_sql, Confidence_pct, Support_pct) values ";
+		SQL = "insert into " + bracketTable + " (ante_sql, con_sql, Confidence_pct, Support_pct) values ";
 		
 		String insertvalue = "";
 		int i = 0, breaker = 100;
-		
 		
 		for (int j = 0; i < carma_max; ++i, ++j){
 			if ((j == breaker) || (i == carma_max -1)) 
@@ -93,7 +93,7 @@ public class Associate {
 				SQL = SQL + insertvalue;
 				System.out.println(SQL);
 				myconn.execSQL(SQL);
-				SQL = "insert into dbo.carma_10_pct (ante_sql, con_sql, Confidence_pct, Support_pct) values ";
+				SQL = "insert into " + bracketTable + " (ante_sql, con_sql, Confidence_pct, Support_pct) values ";
 				insertvalue = "";
 				System.out.println("i is : " + i + " and j is: " + j);
 				j = 0;
@@ -102,7 +102,6 @@ public class Associate {
 				insertvalue = insertvalue + "('" + mycarma[i].getante() + "','" + mycarma[i].getcon() + "'," + mycarma[i].getconfidence() + "," + mycarma[i].getsupport()+ "),";
 			//System.out.println(insertvalue);
 		}
-		
 		
 	}
 
@@ -113,6 +112,16 @@ public class Associate {
 		System.out.println("pop is: " + pop);
 	}
 
+	private void settable(int bracket) {
+		// TODO Auto-generated method stub
+		
+		if (bracket == 10)
+				bracketTable = "dbo.carma_10_pct";
+		else if (bracket == 20)
+				bracketTable = "dbo.carma_20_pct";
+		else bracketTable = "dbo.carma_80_pct";
+	}
+	
 	private void insertmyCarma() {
 		// TODO Auto-generated method stub
 		mycarma[carma_count-1].setCarma(ante_count, con_count, carma_count, ante_sql, con_sql);
