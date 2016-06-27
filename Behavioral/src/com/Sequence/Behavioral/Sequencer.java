@@ -25,6 +25,7 @@ public class Sequencer {
 		
 		SQL = "select COUNT(MCI_ID) count from dbo.temp_MCI_month_Count_min";
 		
+		
 		max = myconn.execSQL_returnint(SQL);
 		
 		return max;
