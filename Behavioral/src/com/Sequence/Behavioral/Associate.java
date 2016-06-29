@@ -15,6 +15,8 @@ public class Associate {
 	private String SQL;
 	private int pop; //mci_id count
 	private String bracketTable;
+	private int limit = 100;
+	private int insert_start_counter = 1;
 	
 	DBConn myconn;
 	Carma[] mycarma;
@@ -26,9 +28,10 @@ public class Associate {
 		myconn.setDBConn("C:/Props/Sequence/DBprops.properties");
 		
 		SQL = "select COUNT(*) count from dbo.carma_3_pct";
-				
+		
 		carma_max = myconn.execSQL_returnint(SQL);
 		
+		++carma_max;
 		return carma_max;
 	}
 	
@@ -40,7 +43,9 @@ public class Associate {
 		3. Calculate the confidence and support
 			a. Confidence: Con Count/ Ante Count
 			b. Support: ConCount/ Total Population considered 
-		4. Update carma table: insert these numbers (#3) back into carma_3_pct table
+		4. Store these in an array
+		5. When the array size hits a limit, update carma table: insert these numbers (#3) into carma table according to the bracket
+		6. Reset the array and Loop
 		*/
 		
 		setpop(bracket);
@@ -48,8 +53,11 @@ public class Associate {
 		
 		mycarma = new Carma[carma_max];
 		
+		
 		for (int i = 0; i < carma_max; ++i) 
 			mycarma[i] = new Carma();
+		
+		int breaker = 0, checker = 0;
 		
 		for(carma_count = 1; carma_count <= carma_max; ++carma_count) //Condition should be carma_max
 		{
@@ -60,54 +68,107 @@ public class Associate {
 			SQL = "select con_sql code from dbo.carma_3_pct where TABLE_ID = " + carma_count;
 			con_sql = myconn.execSQL_returnString(SQL);
 			
-			SQL = "select COUNT(MCI_ID) count from dbo.MCI_DX_Pivot where SU_Ind = " + bracket + " and " + ante_sql;
+			if (bracket != 0)
+				SQL = "select COUNT(MCI_ID) count from dbo.MCI_DX_Pivot where SU_Ind = " + bracket + " and " + ante_sql;	
+			else 
+				SQL = "select COUNT(MCI_ID) count from dbo.MCI_DX_Pivot where " + ante_sql;
+				
 			System.out.println(SQL);
 			ante_count = myconn.execSQL_returnint(SQL);
 			System.out.println("Ante Count is: "+ ante_count);
 			
-			SQL = "select COUNT(MCI_ID) count from dbo.MCI_DX_Pivot where SU_Ind = " + bracket + " and " + ante_sql + " and " + con_sql;
+			if (bracket != 0)
+				SQL = "select COUNT(MCI_ID) count from dbo.MCI_DX_Pivot where SU_Ind = " + bracket + " and " + ante_sql + " and " + con_sql;
+			else 
+				SQL = "select COUNT(MCI_ID) count from dbo.MCI_DX_Pivot where " + ante_sql + " and " + con_sql;
+			
 			System.out.println(SQL);
 			con_count = myconn.execSQL_returnint(SQL);
 			System.out.println("Con Count is: "+ con_count);
 			
-			insertmyCarma();
+			if ((ante_count > 0) || (con_count > 0))
+			{
+				insertmyCarma();
+				++breaker;
+				System.out.println("carma_count is: "+ carma_count);
+				System.out.println("breaker is: "+ breaker);
+			}
 			
+			if(breaker == limit)
+			{
+				checker = insertCarma(breaker);
+				
+				if (checker ==0)
+					break;
+					
+				breaker = 0;
+
+			}
 		}
 		
-		insertCarma();
+		insertCarma(breaker);
 		
 		return carma_count;
 	}
 
-	private void insertCarma() {
+	
+	//Carma_count goes from 1 - 474170
+	//limit = 1000
+	//breaker is incremented every time a value is inserted into mycarma array
+	//when breaker = limit, records are inserted into table
+	//breaker is reset to 0
+	//challenge is to only insert valid records
+	//the array contains many nulls
+	
+	
+	private int insertCarma(int breaker) {
 		// TODO Auto-generated method stub
-		SQL = "insert into " + bracketTable + " (ante_sql, con_sql, Confidence_pct, Support_pct) values ";
-		
+		SQL = "insert into " + bracketTable + " (ante_sql, con_sql, Confidence_pct, Support_pct, ante_count, con_count) values ";
 		String insertvalue = "";
-		int i = 0, breaker = 100;
 		
-		for (int j = 0; i < carma_max; ++i, ++j){
-			if ((j == breaker) || (i == carma_max -1)) 
-			{	
-				insertvalue = insertvalue + "('" + mycarma[i].getante() + "','" + mycarma[i].getcon() + "'," + mycarma[i].getconfidence() + "," + mycarma[i].getsupport()+ ")";
-				SQL = SQL + insertvalue;
-				System.out.println(SQL);
-				myconn.execSQL(SQL);
-				SQL = "insert into " + bracketTable + " (ante_sql, con_sql, Confidence_pct, Support_pct) values ";
-				insertvalue = "";
-				System.out.println("i is : " + i + " and j is: " + j);
-				j = 0;
+		for(int i = insert_start_counter, j = 1; i <= carma_count; ++i)
+		{		
+			ante_sql = mycarma[i].getante();
+			
+			if (ante_sql != null)
+			{
+				insertvalue = insertvalue + "('" + mycarma[i].getante() + "','" + mycarma[i].getcon() + "'," + mycarma[i].getconfidence() + "," + mycarma[i].getsupport() + "," + mycarma[i].getantecount() + "," + mycarma[i].getconcount() + ")";
+				System.out.println(insertvalue);
+				System.out.println("j is : " + j);
+				System.out.println("i is : " + i);
+				if (j == breaker)  
+				{	
+					SQL = SQL + insertvalue;
+					System.out.println(SQL);
+					myconn.execSQL(SQL);
+					System.out.println("i is : " + i);
+				}
+				else
+					insertvalue = insertvalue + ",";
+				
+				++j;
 			}
-			else
-				insertvalue = insertvalue + "('" + mycarma[i].getante() + "','" + mycarma[i].getcon() + "'," + mycarma[i].getconfidence() + "," + mycarma[i].getsupport()+ "),";
-			//System.out.println(insertvalue);
 		}
+		
+		insert_start_counter = carma_count+1;
+		return 1;
 		
 	}
 
+	
+	private void insertmyCarma() {
+		// TODO Auto-generated method stub
+		mycarma[carma_count].setCarma(ante_count, con_count, carma_count, ante_sql, con_sql);
+		mycarma[carma_count].setconfidence();
+		mycarma[carma_count].setsupport(pop);
+	}
+	
 	private void setpop(int bracket) {
 		// TODO Auto-generated method stub
-		SQL = "select count(MCI_ID) count from dbo.mci_rank where SU_Ind = " + bracket;
+		if (bracket == 0)
+			SQL = "select count(MCI_ID) count from dbo.mci_rank where SU_Ind is not null";
+		else SQL = "select count(MCI_ID) count from dbo.mci_rank where SU_Ind = " + bracket;
+
 		pop = myconn.execSQL_returnint(SQL);
 		System.out.println("pop is: " + pop);
 	}
@@ -116,17 +177,15 @@ public class Associate {
 		// TODO Auto-generated method stub
 		
 		if (bracket == 10)
-				bracketTable = "dbo.carma_10_pct";
+			bracketTable = "dbo.carma_10_pct";
 		else if (bracket == 20)
-				bracketTable = "dbo.carma_20_pct";
-		else bracketTable = "dbo.carma_80_pct";
+			bracketTable = "dbo.carma_20_pct";
+		else if (bracket == 80) 
+			bracketTable = "dbo.carma_80_pct";
+		else 
+			bracketTable = "dbo.carma_All";
 	}
 	
-	private void insertmyCarma() {
-		// TODO Auto-generated method stub
-		mycarma[carma_count-1].setCarma(ante_count, con_count, carma_count, ante_sql, con_sql);
-		mycarma[carma_count-1].setconfidence();
-		mycarma[carma_count-1].setsupport(pop);
-	}
+
 	
 }

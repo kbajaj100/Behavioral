@@ -33,11 +33,11 @@ public class Carma {
 		System.out.println("Support is : " + support);
 	}
 	
-	private int getantecount(){
+	int getantecount(){
 		return ante_count;
 	}
 	
-	private int getconcount(){
+	int getconcount(){
 		return con_count;		
 	}
 	

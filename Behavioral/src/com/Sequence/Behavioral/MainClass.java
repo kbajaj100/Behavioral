@@ -15,6 +15,22 @@ public class MainClass {
 		
 		Association();
 		
+		Predictor();
+		
+	}
+
+	private static void Predictor() {
+		// TODO Auto-generated method stub
+		
+		/*
+		 * 1. Get the ante and con from each record of carma_all 
+		 * 2. Run it against the Pivot table and get back the MCIs
+		 * 3. Store the MCIs in an array along with the SU_ind
+		 */
+		
+		int max, count;
+		
+		Predictor myPredictor = new Predictor();
 	}
 
 	private static void Association() throws FileNotFoundException, IOException, SQLException {
@@ -24,7 +40,7 @@ public class MainClass {
 		
 		Associate myassociate = new Associate();
 		
-		bracket = 20;
+		bracket = 0;
 		
 		max = myassociate.getmax();
 		count = myassociate.ExecuteCarma(bracket);
