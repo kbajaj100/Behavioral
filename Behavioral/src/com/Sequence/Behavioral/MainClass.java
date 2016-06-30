@@ -13,9 +13,9 @@ public class MainClass {
 	
 		//Sequencer();
 		
-		//Association();
+		Association();
 		
-		Predictor();
+		//Predictor();
 		
 	}
 
@@ -34,14 +34,15 @@ public class MainClass {
 	private static void Association() throws FileNotFoundException, IOException, SQLException {
 		// TODO Auto-generated method stub
 		
-		int max, count, bracket;
+		int max, count, bracket, period;
 		
 		Associate myassociate = new Associate();
 		
 		bracket = 0;
+		period = 6;
 		
 		max = myassociate.getmax();
-		count = myassociate.ExecuteCarma(bracket);
+		count = myassociate.ExecuteCarma(bracket, period);
 		
 	}
 

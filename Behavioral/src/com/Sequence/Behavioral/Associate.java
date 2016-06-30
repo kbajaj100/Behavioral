@@ -15,6 +15,7 @@ public class Associate {
 	private String SQL;
 	private int pop; //mci_id count
 	private String bracketTable;
+	private String pivotTable;
 	private int limit = 100;
 	private int insert_start_counter = 1;
 	
@@ -35,7 +36,7 @@ public class Associate {
 		return carma_max;
 	}
 	
-	public int ExecuteCarma(int bracket){
+	public int ExecuteCarma(int bracket, int period){
 		
 		/*
 		1. Get the first ante_sql and con_sql from carma_3_pct
@@ -49,7 +50,8 @@ public class Associate {
 		*/
 		
 		setpop(bracket);
-		settable(bracket);
+		setbrackettable(period);
+		setpivotTable(period);
 		
 		mycarma = new Carma[carma_max];
 		
@@ -68,19 +70,19 @@ public class Associate {
 			SQL = "select con_sql code from dbo.carma_3_pct where TABLE_ID = " + carma_count;
 			con_sql = myconn.execSQL_returnString(SQL);
 			
-			if (bracket != 0)
-				SQL = "select COUNT(MCI_ID) count from dbo.MCI_DX_Pivot where SU_Ind = " + bracket + " and " + ante_sql;	
-			else 
-				SQL = "select COUNT(MCI_ID) count from dbo.MCI_DX_Pivot where " + ante_sql;
+			//if (bracket != 0)
+			//	SQL = "select COUNT(MCI_ID) count from " + pivotTable + " where SU_Ind = " + bracket + " and " + ante_sql;	
+			//else 
+			SQL = "select COUNT(MCI_ID) count from " + pivotTable + " where " + ante_sql;
 				
 			System.out.println(SQL);
 			ante_count = myconn.execSQL_returnint(SQL);
 			System.out.println("Ante Count is: "+ ante_count);
 			
-			if (bracket != 0)
-				SQL = "select COUNT(MCI_ID) count from dbo.MCI_DX_Pivot where SU_Ind = " + bracket + " and " + ante_sql + " and " + con_sql;
-			else 
-				SQL = "select COUNT(MCI_ID) count from dbo.MCI_DX_Pivot where " + ante_sql + " and " + con_sql;
+			//if (bracket != 0)
+			//	SQL = "select COUNT(MCI_ID) count from " + pivotTable + " where SU_Ind = " + bracket + " and " + ante_sql + " and " + con_sql;
+			//else 
+			SQL = "select COUNT(MCI_ID) count from " + pivotTable + " where " + ante_sql + " and " + con_sql;
 			
 			System.out.println(SQL);
 			con_count = myconn.execSQL_returnint(SQL);
@@ -112,6 +114,17 @@ public class Associate {
 	}
 
 	
+	private void setpivotTable(int period) {
+		// TODO Auto-generated method stub
+		
+		if (period ==3)
+			pivotTable = "dbo.MCI_DX_Pivot_3M";
+		else if (period ==6)
+			pivotTable = "dbo.MCI_DX_Pivot_6M";
+		else pivotTable = "dbo.MCI_DX_Pivot_12M";
+		
+	}
+
 	//Carma_count goes from 1 - 474170
 	//limit = 1000
 	//breaker is incremented every time a value is inserted into mycarma array
@@ -173,17 +186,15 @@ public class Associate {
 		System.out.println("pop is: " + pop);
 	}
 
-	private void settable(int bracket) {
+	private void setbrackettable(int bracket) {
 		// TODO Auto-generated method stub
 		
-		if (bracket == 10)
-			bracketTable = "dbo.carma_10_pct";
-		else if (bracket == 20)
-			bracketTable = "dbo.carma_20_pct";
-		else if (bracket == 80) 
-			bracketTable = "dbo.carma_80_pct";
+		if (bracket == 3)
+			bracketTable = "dbo.carma_All_3M";
+		else if (bracket == 6)
+			bracketTable = "dbo.carma_All_6M";
 		else 
-			bracketTable = "dbo.carma_All";
+			bracketTable = "dbo.carma_All_12";
 	}
 	
 
