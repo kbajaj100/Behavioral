@@ -13,24 +13,22 @@ public class MainClass {
 	
 		//Sequencer();
 		
-		Association();
+		//Association();
 		
 		Predictor();
 		
 	}
 
-	private static void Predictor() {
-		// TODO Auto-generated method stub
+	private static void Predictor() throws FileNotFoundException, IOException, SQLException {
+					
+		int max, count, bracket;
 		
-		/*
-		 * 1. Get the ante and con from each record of carma_all 
-		 * 2. Run it against the Pivot table and get back the MCIs
-		 * 3. Store the MCIs in an array along with the SU_ind
-		 */
-		
-		int max, count;
+		bracket = 0;
 		
 		Predictor myPredictor = new Predictor();
+		max = myPredictor.getmax();
+		
+		count = myPredictor.ExecutePredictor(bracket);
 	}
 
 	private static void Association() throws FileNotFoundException, IOException, SQLException {
