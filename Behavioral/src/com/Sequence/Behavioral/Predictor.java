@@ -17,7 +17,9 @@ public class Predictor {
 	private String con_sql;
 	private String SQL;
 	private int pop; //mci_id count
-	private String bracketTable;
+	private String MCITable;
+	private String carmaTable;
+	private String pivotTable;
 	private int limit = 100;
 	private int insert_start_counter = 1;
 	private int MCI_ID;
@@ -28,25 +30,29 @@ public class Predictor {
 	private Connection conn = null;
 	private Statement stmt = null;
 	private ResultSet rs= null;
-
 	
 	DBConn myconn;
 	SeqList[] mylist;
-		
-	public int getmax() throws FileNotFoundException, IOException, SQLException{
+	
+	public int getmax(int bracket) throws FileNotFoundException, IOException, SQLException{
 		
 		myconn = new DBConn();
 		
 		myconn.setDBConn("C:/Props/Sequence/DBprops.properties");
-		
-		SQL = "select COUNT(*) count from dbo.carma_All";
+
+		settablecarma(bracket);
+		SQL = "select COUNT(*) count from " + carmaTable; 
 		
 		max = myconn.execSQL_returnint(SQL);
 		
 		System.out.println("max is: " + max);
+		
+		settablepivot(bracket);
+		settableMCI(bracket);
 		return max;
 	}
 	
+
 	public int ExecutePredictor(int bracket){
 		
 		/*
@@ -56,8 +62,6 @@ public class Predictor {
 		 */
 				
 		mylist = new SeqList[max];
-		
-		settable(bracket);
 		
 		for (int i = 0; i < max; ++i) 
 		{
@@ -71,13 +75,13 @@ public class Predictor {
 		{
 			checker = 0;
 			
-			SQL = "select ante_sql code from dbo.carma_All where TABLE_ID = " + pcount;
+			SQL = "select ante_sql code from " + carmaTable + " where TABLE_ID = " + pcount;
 			ante_sql = myconn.execSQL_returnString(SQL);
 						
-			SQL = "select con_sql code from dbo.carma_All where TABLE_ID = " + pcount;
+			SQL = "select con_sql code from " + carmaTable + " where TABLE_ID = " + pcount;
 			con_sql = myconn.execSQL_returnString(SQL);
 						
-			SQL = "select count(a11.MCI_ID) count from dbo.MCI_DX_Pivot a11 where " + ante_sql + " and " + con_sql;
+			SQL = "select count(a11.MCI_ID) count from " + pivotTable  + " a11 where " + ante_sql + " and " + con_sql;
 			
 			mci_count = myconn.execSQL_returnint(SQL);
 			
@@ -89,7 +93,7 @@ public class Predictor {
 				mylist[pcount].setseqid(pcount);				
 				mylist[pcount].initiate_mci_array(mci_count);
 				
-				SQL = "select MCI_ID code from dbo.MCI_DX_Pivot where " + ante_sql + " and " + con_sql;
+				SQL = "select MCI_ID code from " + pivotTable + " where " + ante_sql + " and " + con_sql;
 	
 				dbUrl = myconn.getdbUrl();
 				
@@ -156,13 +160,13 @@ public class Predictor {
 	private void setSU_Ind() {
 		// TODO Auto-generated method stub
 		
-		SQL = "update a11 set a11.SU_Ind = a12.SU_Ind from " + bracketTable + " a11 join dbo.mci_rank a12 on (a11.MCI_ID = a12.MCI_ID)";
+		SQL = "update a11 set a11.SU_Ind = a12.SU_Ind from " + MCITable + " a11 join dbo.mci_rank a12 on (a11.MCI_ID = a12.MCI_ID)";
 		myconn.execSQL(SQL);
 	}
 
 	private int insertMCI(int breaker) {
 		// TODO Auto-generated method stub
-		SQL = "insert into " + bracketTable + " (Sequence_ID, MCI_ID) values ";
+		SQL = "insert into " + MCITable + " (Sequence_ID, MCI_ID) values ";
 		String insertvalue = "";
 		
 		int size;
@@ -206,20 +210,30 @@ public class Predictor {
 		
 	}
 
-	private void settable(int bracket) {
+	private void settableMCI(int bracket) {
 		// TODO Auto-generated method stub
 		
-		bracketTable = "dbo.carma_all_MCI";
-		
+		MCITable = "dbo.carma_all_MCI_" + bracket + "M";
+		System.out.println(MCITable);
 		/*if (bracket == 10)
-			bracketTable = "dbo.carma_10_pct";
+			MCITable = "dbo.carma_10_pct";
 		else if (bracket == 20)
-			bracketTable = "dbo.carma_20_pct";
+			MCITable = "dbo.carma_20_pct";
 		else if (bracket == 80) 
-			bracketTable = "dbo.carma_80_pct";
+			MCITable = "dbo.carma_80_pct";
 		else 
-			bracketTable = "dbo.carma_All";*/
+			MCITable = "dbo.carma_All";*/
 	}
-	
 
+	private void settablecarma(int bracket) {
+		// TODO Auto-generated method stub
+		
+		carmaTable = "dbo.carma_all_" + bracket + "M";
+		System.out.println(MCITable);
+	}
+
+	private void settablepivot(int bracket)
+	{
+		pivotTable = "dbo.MCI_DX_Pivot_" + bracket + "M"; 
+	}
 }	

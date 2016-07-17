@@ -13,20 +13,36 @@ public class MainClass {
 	
 		//Sequencer();
 		
-		Association();
+		//Association();
 		
 		//Predictor();
+
+		Lifter();
 		
+	}
+
+	private static void Lifter() throws FileNotFoundException, IOException, SQLException {
+		// TODO Auto-generated method stub
+		
+			int max, count, bracket;
+			
+			bracket = 3;
+
+			Lifter myLifter = new Lifter();
+			max = myLifter.getmax(bracket);
+
+			count = myLifter.ExecutemyLifter(bracket);
+
 	}
 
 	private static void Predictor() throws FileNotFoundException, IOException, SQLException {
 					
 		int max, count, bracket;
 		
-		bracket = 0;
+		bracket = 6;
 		
 		Predictor myPredictor = new Predictor();
-		max = myPredictor.getmax();
+		max = myPredictor.getmax(bracket);
 		
 		count = myPredictor.ExecutePredictor(bracket);
 	}
@@ -39,7 +55,7 @@ public class MainClass {
 		Associate myassociate = new Associate();
 		
 		bracket = 0;
-		period = 6;
+		period = 12;
 		
 		max = myassociate.getmax();
 		count = myassociate.ExecuteCarma(bracket, period);
