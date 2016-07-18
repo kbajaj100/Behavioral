@@ -155,6 +155,45 @@ public class DBConn {
 
 		return 0;
 	}
+
+	public float execSQLreturnfloat(String SQL) {
+		// TODO Auto-generated method stub
+		
+		float count = 0;
+		
+		try {
+			//Step 1. Connection to the db
+			conn = DriverManager.getConnection(dbUrl);
+		
+			// Create statement object
+			stmt = conn.createStatement();
+		
+			// 3. Execute SQL query
+			rs = stmt.executeQuery(SQL);
+			
+			//4. Process result set
+			while (rs.next()){
+				
+				count = rs.getInt("count");
+				//System.out.println(count);
+				return count;
+			}
+		}
+		
+		// Handle any errors that may have occurred.
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		finally {
+			//close(myConn, myStmt, myRS);
+			if (rs   != null) try { rs.close();   } catch(Exception e) {}
+			if (stmt != null) try { stmt.close(); } catch(Exception e) {}
+			if (conn != null) try { conn.close(); } catch(Exception e) {}
+		}
+		
+		return count;
+	}
 	
 	/*public ResultSet execSQL_returnRS(String SQL)
 	{

@@ -26,12 +26,12 @@ public class MainClass {
 		
 			int max, count, bracket;
 			
-			bracket = 3;
+			bracket = 12;
 
 			Lifter myLifter = new Lifter();
 			max = myLifter.getmax(bracket);
 
-			count = myLifter.ExecutemyLifter(bracket);
+			count = myLifter.ExecuteLifter(bracket);
 
 	}
 
