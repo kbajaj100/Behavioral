@@ -17,7 +17,25 @@ public class MainClass {
 		
 		//Predictor();
 
-		Lifter();
+		//Lifter();
+		
+		SU_Month_Identifier();
+		
+	}
+
+	private static void SU_Month_Identifier() throws FileNotFoundException, IOException, SQLException {
+		// TODO Auto-generated method stub
+		
+		int count;
+		SUMonth mySUmonth = new SUMonth();
+		
+		count = mySUmonth.getmax();
+		
+		System.out.println("max is: " + count);
+
+		count = mySUmonth.getMCIfromDB();
+		count = mySUmonth.getPAfromDB();
+		count = mySUmonth.updateMonth();
 		
 	}
 
