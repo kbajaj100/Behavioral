@@ -5,6 +5,8 @@ public class ComList {
 	private int MCI;
 	private String EndComb;
 	private int numDX;
+	private int numMonth;
+	private int[] Continuum;
 	
 	void setMCI(int MCI_ID){
 		MCI = MCI_ID;
@@ -21,6 +23,16 @@ public class ComList {
 		System.out.println("numDX is: " + numDX);
 	}
 	
+	void setnumMonth(int numMo){
+		numMonth = numMo;
+		Continuum = new int[numMonth];
+		
+	}
+
+	void setContinuum(int Cont, int pos){
+		Continuum[pos] = Cont;
+	}
+	
 	int getMCI(){
 		return MCI;
 	}
@@ -33,6 +45,13 @@ public class ComList {
 		return numDX;
 	}
 	
+	int getnumMonth(){
+		return numMonth;
+	}
+	
+	int getContinuum(int pos){
+		return Continuum[pos];
+	}
 }
 
 

@@ -21,7 +21,20 @@ public class MainClass {
 		
 		//SU_Month_Identifier();
 		
-		EndCombination();
+		//EndCombination();
+		
+		MonthCombination();
+	}
+
+	private static void MonthCombination() throws FileNotFoundException, IOException, SQLException {
+		// TODO Auto-generated method stub
+		int count;
+		MonthCom myMonthCom = new MonthCom();
+		
+		count = myMonthCom.getmax();
+		count = myMonthCom.setMCIandnumMonth();
+		count = myMonthCom.setMCIContinuum();
+		myMonthCom.setMonthEndComb();
 		
 	}
 
