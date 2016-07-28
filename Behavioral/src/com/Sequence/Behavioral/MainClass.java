@@ -19,7 +19,21 @@ public class MainClass {
 
 		//Lifter();
 		
-		SU_Month_Identifier();
+		//SU_Month_Identifier();
+		
+		EndCombination();
+		
+	}
+
+	private static void EndCombination() throws FileNotFoundException, IOException, SQLException {
+		// TODO Auto-generated method stub
+		
+		int count;
+		EndCom myEndCom = new EndCom();
+		
+		count = myEndCom.getmax();
+		count = myEndCom.setMCIandDXNum();
+		myEndCom.setEndComb();
 		
 	}
 

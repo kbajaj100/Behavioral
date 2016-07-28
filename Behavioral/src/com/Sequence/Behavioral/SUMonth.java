@@ -149,7 +149,6 @@ public class SUMonth {
 	public int updateMonth(){
 		
 		for(int i = 0; i < carma_max; ++i){
-			
 			SQL = "update dbo.MCI_Month_Continuum_Pivot set Month_SU = " + myList[i].getMonth() + " where MCI_ID = " + myList[i].getMCI();
 			myconn.execSQL(SQL);
 		}
